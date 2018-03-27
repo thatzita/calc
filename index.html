@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- Gör knappar som gör andra element synliga eller osynliga när man klickar på dem. Använd v-if. -->
+<html>
+
+<head>
+  <title>calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script>
+    window.addEventListener("load", () => {
+      let vm = new Vue({
+        el: "#root",
+        data: {
+          disabledBtn: true,
+          currentNumber: this.currentNumber,
+          prevNumber: this.prevNumber,
+          total: this.total,
+          result: this.result,
+          addTrue: false,
+          subTrue: false,
+        },
+        methods: {
+          addition: function() {
+            if (this.prevNumber === undefined) {
+              this.prevNumber = this.currentNumber;
+              this.total = this.prevNumber;
+              this.result = this.total;
+              // console.log(this.prevNumber);
+              // console.log(this.currentNumber);
+              // console.log(this.total);
+              this.addTrue = true;
+            } else if (this.currentNumber == "") {
+              this.currentNumber = 0;
+              this.prevNumber = this.result;
+              this.total = this.currentNumber + this.prevNumber;
+              this.result = this.total;
+              // console.log(this.prevNumber);
+              // console.log(this.currentNumber);
+              // console.log(this.total);
+              this.addTrue = true;
+            } else {
+              this.prevNumber = this.result;
+              this.total = this.currentNumber + this.prevNumber;
+              this.result = this.total;
+              // console.log(this.prevNumber);
+              // console.log(this.currentNumber);
+              // console.log(this.total);
+              this.addTrue = true;
+            }
+          },
+          sub: function() {
+            if (this.prevNumber === undefined) {
+              this.prevNumber = this.currentNumber;
+              this.total = this.prevNumber;
+              this.result = this.total;
+              console.log(this.prevNumber);
+              console.log(this.currentNumber);
+              console.log(this.total);
+              this.subTrue = true;
+            } else if (this.currentNumber == "") {
+              this.currentNumber = 0;
+              this.prevNumber = this.result;
+              this.total = this.prevNumber - this.currentNumber;
+              this.result = this.total;
+              console.log(this.prevNumber);
+              console.log(this.currentNumber);
+              console.log(this.total);
+              this.subTrue = true;
+            } else {
+              this.prevNumber = this.result;
+              this.total = this.prevNumber - this.currentNumber;
+              this.result = this.total;
+              console.log(this.prevNumber);
+              console.log(this.currentNumber);
+              console.log(this.total);
+              this.subTrue = true;
+            }
+          },
+          divide: function() {
+            this.total = this.total / this.currentNumber;
+          },
+          multiply: function() {
+            this.total = this.total * this.currentNumber;
+          },
+          theResult: function() {
+            if (this.addTrue) {
+              this.result = this.total + this.currentNumber;
+              this.addTrue = false;
+            } else if (this.subTrue) {
+              this.result = this.total - this.currentNumber;
+              this.subTrue = false;
+            }
+
+          },
+          clear: function() {
+            this.prevNumber = 0;
+            this.total = 0;
+            this.currentNumber = 0;
+            this.result = 0;
+          }
+        }
+      })
+    })
+  </script>
+  <style>
+    body {
+      font-family: monospace;
+    }
+
+    p {
+      font-size: 32px;
+
+    }
+
+    button {
+      padding: 10px;
+      font-weight: 700;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="root">
+    <input v-model.number="currentNumber" placeholder="Type a number..."></input>
+    <p>Current number: {{currentNumber}}</p>
+    <p>Previous number: {{prevNumber}}</p>
+    <p>Current total: {{total}}</p>
+    <p>Result is: {{result}}</p>
+    <button v-on:click="addition">+</button>
+    <button v-on:click="sub">-</button>
+    <button v-on:click="divide">/</button>
+    <button v-on:click="multiply">*</button>
+    <button v-on:click="clear">C</button>
+    <button v-on:click="theResult">=</button>
+
+  </div>
+
+</body>
+
+</html>
