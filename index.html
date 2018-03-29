@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <!-- Gör knappar som gör andra element synliga eller osynliga när man klickar på dem. Använd v-if. -->
-<html>
+<html lang="en">
 
 <head>
   <title>calculator</title>
+  <meta charset="utf-8" />
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
   <script>
     window.addEventListener("load", () => {
@@ -17,84 +18,191 @@
           result: this.result,
           addTrue: false,
           subTrue: false,
+          divTrue: false,
+          multiTrue: false,
         },
         methods: {
           addition: function() {
-            if (this.prevNumber === undefined) {
+            if (this.prevNumber === undefined || this.prevNumber == 0) {
               this.prevNumber = this.currentNumber;
               this.total = this.prevNumber;
               this.result = this.total;
-              // console.log(this.prevNumber);
-              // console.log(this.currentNumber);
-              // console.log(this.total);
               this.addTrue = true;
             } else if (this.currentNumber == "") {
-              this.currentNumber = 0;
               this.prevNumber = this.result;
               this.total = this.currentNumber + this.prevNumber;
               this.result = this.total;
-              // console.log(this.prevNumber);
-              // console.log(this.currentNumber);
-              // console.log(this.total);
               this.addTrue = true;
-            } else {
-              this.prevNumber = this.result;
-              this.total = this.currentNumber + this.prevNumber;
-              this.result = this.total;
-              // console.log(this.prevNumber);
-              // console.log(this.currentNumber);
-              // console.log(this.total);
+            } else if (this.addTrue == true) {
+              this.result = this.prevNumber + this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+            } else if (this.subTrue == true) {
+              this.result = this.prevNumber - this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.subTrue = false;
+              this.addTrue = true;
+            } else if (this.divTrue == true) {
+              this.result = this.prevNumber / this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.divTrue = false;
+              this.addTrue = true;
+            } else if (this.multiTrue == true) {
+              this.result = this.prevNumber * this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.multiTrue = false;
               this.addTrue = true;
             }
           },
           sub: function() {
-            if (this.prevNumber === undefined) {
+            if (this.prevNumber === undefined || this.prevNumber == 0) {
               this.prevNumber = this.currentNumber;
               this.total = this.prevNumber;
               this.result = this.total;
-              console.log(this.prevNumber);
-              console.log(this.currentNumber);
-              console.log(this.total);
               this.subTrue = true;
             } else if (this.currentNumber == "") {
               this.currentNumber = 0;
               this.prevNumber = this.result;
               this.total = this.prevNumber - this.currentNumber;
               this.result = this.total;
-              console.log(this.prevNumber);
-              console.log(this.currentNumber);
-              console.log(this.total);
               this.subTrue = true;
-            } else {
+            } else if (this.subTrue == true) {
+              this.result = this.prevNumber - this.currentNumber;
               this.prevNumber = this.result;
-              this.total = this.prevNumber - this.currentNumber;
-              this.result = this.total;
-              console.log(this.prevNumber);
-              console.log(this.currentNumber);
-              console.log(this.total);
+              this.total = this.result;
+              this.result = this.prevNumber
+            } else if (this.addTrue == true) {
+              this.result = this.prevNumber + this.currentNumber;
+              this.prevNumber = this.result;
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.addTrue = false;
+              this.subTrue = true
+            } else if (this.divTrue == true) {
+              this.result = this.prevNumber / this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.divTrue = false;
+              this.subTrue = true;
+            } else if (this.multiTrue == true) {
+              this.result = this.prevNumber * this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.multiTrue = false;
               this.subTrue = true;
             }
           },
           divide: function() {
-            this.total = this.total / this.currentNumber;
+            if (this.prevNumber === undefined || this.prevNumber == 0) {
+              this.prevNumber = this.currentNumber;
+              this.total = this.prevNumber;
+              this.result = this.total;
+              this.subTrue = true;
+            } else if (this.currentNumber == "") {
+              this.currentNumber = 0;
+              this.prevNumber = this.result;
+              this.total = this.prevNumber - this.currentNumber;
+              this.result = this.total;
+              this.subTrue = true;
+            } else if (this.subTrue == true) {
+              this.result = this.prevNumber - this.currentNumber;
+              this.prevNumber = this.result;
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.subTrue = false;
+              this.divTrue = true
+            } else if (this.addTrue == true) {
+              this.result = this.prevNumber + this.currentNumber;
+              this.prevNumber = this.result;
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.addTrue = false;
+              this.divTrue = true;
+            } else if (this.divTrue == true) {
+              this.result = this.prevNumber / this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber
+            } else if (this.multiTrue == true) {
+              this.result = this.prevNumber * this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.multiTrue = false;
+              this.divTrue = true;
+            }
           },
           multiply: function() {
-            this.total = this.total * this.currentNumber;
+            if (this.prevNumber === undefined) {
+              this.prevNumber = this.currentNumber;
+              this.total = this.prevNumber;
+              this.result = this.total;
+              this.multiTrue = true;
+            } else if (this.currentNumber == "") {
+              this.currentNumber = 0;
+              this.prevNumber = this.result;
+              this.total = this.currentNumber * this.prevNumber;
+              this.result = this.total;
+              this.multiTrue = true;
+            } else if (this.subTrue == true) {
+              this.result = this.prevNumber - this.currentNumber;
+              this.prevNumber = this.result;
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.subTrue = false;
+              this.multiTrue = true;
+            } else if (this.addTrue == true) {
+              this.result = this.prevNumber + this.currentNumber;
+              this.prevNumber = this.result;
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.addTrue = false;
+              this.multiTrue = true;
+            } else if (this.divTrue == true) {
+              this.result = this.prevNumber / this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+              this.divTrue = false;
+              this.multiTrue = true;
+            } else if (this.multiTrue == true) {
+              this.result = this.prevNumber * this.currentNumber;
+              this.prevNumber = this.result
+              this.total = this.result;
+              this.result = this.prevNumber;
+            }
           },
           theResult: function() {
             if (this.addTrue) {
               this.result = this.total + this.currentNumber;
               this.addTrue = false;
-            } else if (this.subTrue) {
+            }
+            if (this.subTrue) {
               this.result = this.total - this.currentNumber;
               this.subTrue = false;
             }
-
+            if (this.divTrue) {
+              this.result = this.total / this.currentNumber;
+              this.subTrue = false;
+            }
+            if (this.multiTrue) {
+              this.result = this.total * this.currentNumber;
+              this.subTrue = false;
+            }
           },
           clear: function() {
             this.prevNumber = 0;
             this.total = 0;
-            this.currentNumber = 0;
+            this.currentNumber = "";
             this.result = 0;
           }
         }
