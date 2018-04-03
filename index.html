@@ -374,8 +374,6 @@
       font-size: 30px;
     }
 
-
-
     button {
       color: ghostwhite;
       background-color: black;
@@ -392,6 +390,10 @@
       font-weight: 700;
       font-size: 20px;
       width: 80px;
+    }
+
+    button.result {
+      width: 180px;
     }
 
     #inputField {
@@ -454,7 +456,7 @@
       <br>
       <button v-on:click="addNr">.</button>
       <button v-on:click="addNr">0</button>
-      <button v-on:click="theResult">=</button>
+      <button class="result" v-on:click="theResult">=</button>
 
       <div id="output">
         <p>Current number: {{currentNumber}}</p>
