@@ -21,6 +21,7 @@
           multiTrue: false,
           squareRootTrue: false,
           squaredTrue: false,
+          dot: false,
           history: [],
           target: this.target,
           startingZero: false,
@@ -33,6 +34,7 @@
           },
           addition: function() {
             this.addTrue = true;
+            this.dot = false;
             if (this.addTrue && this.currentNumber !== "") {
               if (this.subTrue == true) {
                 this.subTrue = false;
@@ -73,6 +75,7 @@
             this.currentNumber = "";
           },
           sub: function(e) {
+            this.dot = false;
             this.target = e.target.innerHTML;
             if (this.target == "-" && this.currentNumber == "-0") {
               this.currentNumber = this.target + parseFloat(this.currentNumber);
@@ -116,6 +119,7 @@
           },
           divide: function() {
             this.divTrue = true;
+            this.dot = false;
             if (this.prevNumber == 0 && this.currentNumber != "") {
               this.prevNumber = parseFloat(this.currentNumber);
               this.result = this.prevNumber;
@@ -153,12 +157,13 @@
           },
           multiply: function() {
             this.multiTrue = true;
-            if (this.multiTrue && this.currentNumber !== "" && this.prevNumber == 0 && this.subTrue) {
+            this.dot = false;
+            if (this.multiTrue && this.currentNumber !== "" && this.prevNumber === 0 && this.subTrue) {
               this.prevNumber = -1;
               this.result = parseFloat(this.prevNumber) * parseFloat(this.currentNumber);
               this.movingNumbers();
               this.subTrue = false;
-            } else if (this.multiTrue && this.currentNumber !== "" && this.prevNumber == 0) {
+            } else if (this.multiTrue && this.currentNumber !== "" && this.prevNumber === 0) {
               this.prevNumber = 1;
               this.result = parseFloat(this.prevNumber) * parseFloat(this.currentNumber);
               this.movingNumbers();
@@ -210,6 +215,7 @@
           },
           squareRoot: function() {
             this.squareRootTrue = true;
+            this.dot = false;
             if (this.squareRootTrue && this.currentNumber != "") {
               console.log("squareRootTrue")
               this.result = Math.sqrt(this.currentNumber);
@@ -269,6 +275,7 @@
           },
           squared: function() {
             this.squaredTrue = true;
+            this.dot = false;
             // if (this.currentNumber > 0 || this.prevNumber == 0 && this.currentNumber > 0) {
             //   this.result = Math.pow(this.currentNumber, 2);
             //   this.prevNumber = this.currentNumber;
@@ -298,7 +305,9 @@
             //   console.log("hejsan")
             //   // this.currentNumber = "";
             // }
-            else if (this.currentNumber > 0 && this.multiTrue) {
+            else if (this.currentNumber > 0 && this.multiTrue ||
+              this.currentNumber > 0 && this.subTrue || this.currentNumber > 0 && this.addTrue || this.currentNumber > 0 && this.divTrue) {
+
               console.log("tjenarwe")
               this.result = Math.pow(this.currentNumber, 2);
 
@@ -306,6 +315,10 @@
               // this.movingNumbers();
               this.history.push(this.result);
               // this.squaredTrue = false;
+              this.subTrue = false;
+              this.divTrue = false;
+              this.multiTrue = false;
+              this.squaredTrue = false;
               this.currentNumber = "";
             }
           },
@@ -358,7 +371,7 @@
                 this.divTrue = false;
                 this.movingNumbers();
                 this.history.push(this.result);
-              } else if (this.currentNumber == 0 || this.currentNumber == "") {
+              } else if (this.currentNumber === 0 || this.currentNumber == "") {
                 console.log("can't divide by zero");
                 this.divTrue = false;
               } else {
@@ -407,6 +420,7 @@
 
           },
           clear: function() {
+            this.dot = false;
             this.prevNumber = 0;
             this.total = 0;
             this.currentNumber = 0;
@@ -421,6 +435,7 @@
           addNr: function(e) {
             if (e.target.innerHTML == ".") {
               this.startingZero = true;
+              this.dot = true;
               this.currentNumber = this.currentNumber + e.target.innerHTML;
             } else if (this.currentNumber == 0 && this.prevNumber == 0 && this.result == 0) {
               if (this.startingZero) {
@@ -554,7 +569,7 @@
       <button v-on:click="addNr">3</button>
       <button v-on:click="addition">+</button>
       <br>
-      <button v-on:click="addNr">.</button>
+      <button v-bind:disabled="dot" v-on:click="addNr">.</button>
       <button v-on:click="addNr">0</button>
       <button class="result" v-on:click="theResult">=</button>
 
