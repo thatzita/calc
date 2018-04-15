@@ -10,11 +10,10 @@
       let vm = new Vue({
         el: "#root",
         data: {
-          currentNumber: this.currentNumber,
-          prevNumber: this.prevNumber,
-          result: this.result,
-          total: this.total,
-          resultSquareRoot: this.resultSquareRoot,
+          currentNumber: 0,
+          prevNumber: 0,
+          result: 0,
+          total: 0,
           disableSqrt: true,
           addTrue: false,
           subTrue: false,
@@ -22,294 +21,379 @@
           multiTrue: false,
           squareRootTrue: false,
           squaredTrue: false,
+          isDecimal: false,
           history: [],
+          target: this.target,
+          startingZero: false,
+          notShowing: true,
+          saveToHistory: "",
+          outputForSquared: 0,
+          outputForRoot: 0,
         },
         methods: {
-          undefindOrZero: function() {
-            this.prevNumber = this.currentNumber;
-            this.total = this.prevNumber;
-            this.result = this.total;
-          },
           movingNumbers: function() {
             this.prevNumber = parseFloat(this.result);
-            this.total = parseFloat(this.result);
             this.result = parseFloat(this.prevNumber);
+            this.total = parseFloat(this.result);
           },
-          addition: function() {
-            this.addTrue = true;
-            if (this.currentNumber != "" && this.prevNumber == undefined) {
-              if (this.prevNumber == undefined && this.currentNumber == undefined) {
-                this.currentNumber = 0;
-                this.undefindOrZero();
-                this.currentNumber = "";
-              } else {
-                this.currentNumber = parseFloat(this.currentNumber)
-                this.undefindOrZero();
-                this.currentNumber = "";
-              }
-            } else if (this.addTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber + parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.currentNumber = "";
-            } else if (this.subTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber - this.currentNumber;
-              this.movingNumbers();
-              this.subTrue = false;
-              this.currentNumber = "";
-            } else if (this.divTrue && this.result !== Infinity && this.currentNumber !== "") {
-              this.result = this.prevNumber / this.currentNumber;
-              this.movingNumbers();
-              this.divTrue = false;
-              this.currentNumber = "";
-            } else if (this.multiTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber * this.currentNumber;
-              this.movingNumbers();
-              this.multiTrue = false;
-              this.currentNumber = "";
-            }
-          },
-          sub: function() {
-            if (this.prevNumber === undefined && this.currentNumber == "") {
-              this.subTrue = true;
-              this.prevNumber = 0;
-            } else if (this.subTrue && this.currentNumber !== "") {
-              this.subTrue = true;
-              this.result = this.prevNumber - parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.currentNumber = "";
-            } else if (this.addTrue && this.currentNumber !== "") {
-              this.subTrue = true;
-              this.result = this.prevNumber + parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.addTrue = false;
-              this.currentNumber = "";
-              this.subTrue = true;
-            } else if (this.divTrue && this.result !== Infinity && this.currentNumber !== "") {
-              this.subTrue = true;
-              this.result = this.prevNumber / this.currentNumber;
-              this.movingNumbers();
-              this.divTrue = false;
-              this.currentNumber = "";
-            } else if (this.multiTrue && this.currentNumber !== "") {
-              this.subTrue = true;
-              this.result = this.prevNumber * this.currentNumber;
-              this.movingNumbers();
-              this.multiTrue = false;
-              this.currentNumber = "";
-            } else if (this.result == this.prevNumber) {
-              this.subTrue = true;
-              if (this.currentNumber != "") {
-                this.result = this.currentNumber;
+          addition: function(e) {
+            this.target = e.target.innerHTML;
+            this.isDecimal = false;
+            if (this.currentNumber !== "") {
+              if (this.subTrue && this.currentNumber !== "") {
+                this.addTrue = true;
+                this.subTrue = false;
+                this.currentNumber = "-" + parseFloat(this.currentNumber);
+                this.result = parseFloat(this.prevNumber) + parseFloat(this.currentNumber);
                 this.movingNumbers();
-                this.currentNumber = "";
+                this.saveToHistory = this.result + this.target;
+              } else if (this.multiTrue && this.currentNumber !== "") {
+                this.addTrue = true;
+                this.multiTrue = false;
+                this.result = this.prevNumber * parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else if (this.divTrue && this.currentNumber !== "") {
+                this.addTrue = true;
+                this.divTrue = false;
+                this.result = this.prevNumber / parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else {
+                this.addTrue = true;
+                this.subTrue = false;
+                this.divTrue = false;
+                this.multiTrue = false;
+                this.squareRootTrue = false;
+                this.squaredTrue = false;
+                this.result = this.prevNumber + parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
               }
-            }
-          },
-          divide: function() {
-            this.divTrue = true;
-            if (this.prevNumber === undefined || this.prevNumber == 0) {
-              this.undefindOrZero();
-              this.currentNumber = "";
-            } else if (this.subTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber - this.currentNumber;
-              this.movingNumbers();
+            } else if (this.squaredTrue && this.currentNumber !== "") {
+              this.addTrue = true;
               this.subTrue = false;
-              this.currentNumber = "";
-            } else if (this.addTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber + parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.addTrue = false;
-              this.currentNumber = "";
-            } else if (this.divTrue && this.result !== Infinity && this.currentNumber !== "") {
-              this.result = this.prevNumber / parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.currentNumber = "";
-            } else if (this.multiTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber * parseFloat(this.currentNumber);
-              this.movingNumbers();
+              this.divTrue = false;
               this.multiTrue = false;
-              this.currentNumber = "";
-            } else if (this.squareRootTrue && this.prevNumber > 0) {
-              this.movingNumbers();
               this.squareRootTrue = false;
-              this.currentNumber = "";
-            }
-          },
-          multiply: function() {
-            this.multiTrue = true;
-            if (this.prevNumber === undefined || this.prevNumber == 0 && this.divTrue != true) {
-              this.undefindOrZero();
-              this.currentNumber = "";
-            } else if (this.subTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber - this.currentNumber;
+              this.squaredTrue = false;
+              this.result = Math.pow(parseFloat(this.result), 2);
               this.movingNumbers();
-              this.subTrue = false;
-              this.currentNumber = "";
-            } else if (this.addTrue && this.currentNumber !== "") {
-              this.result = this.prevNumber + parseFloat(this.currentNumber);
-              this.movingNumbers();
-              this.addTrue = false;
-              this.currentNumber = "";
-            } else if (this.divTrue && this.result !== Infinity && this.currentNumber !== "") {
-              this.result = this.prevNumber / this.currentNumber;
-              this.movingNumbers();
-              this.divTrue = false;
-              this.currentNumber = "";
-            } else if (this.multiTrue && this.divTrue == true) {
-              this.divTrue = false;
-              this.result = this.prevNumber * this.currentNumber;
-              this.movingNumbers();
-              this.currentNumber = "";
-            } else if (this.result == this.prevNumber && this.currentNumber != "") {
-              this.result = this.prevNumber * this.currentNumber
-              this.movingNumbers();
-              this.currentNumber = "";
-            }
-          },
-          squareRoot: function() {
-            this.squareRootTrue = true;
-            if (this.currentNumber > 0 && this.subTrue) {
-              this.result = Math.sqrt(this.currentNumber);
-              this.prevNumber = this.result;
-              this.currentNumber = "";
-              this.history.push(this.result);
-            } else if (this.currentNumber > 0 && this.addTrue) {
-              this.result = Math.sqrt(this.currentNumber);
-              this.prevNumber = this.result;
-              this.currentNumber = "";
-              this.history.push(this.result);
-            } else if (this.currentNumber > 0 && this.divTrue) {
-              this.result = Math.sqrt(this.currentNumber);
-              this.prevNumber = this.result;
-              this.currentNumber = "";
-              this.history.push(this.result);
-            } else if (this.currentNumber > 0 && this.multiTrue) {
-              this.result = Math.sqrt(this.currentNumber);
-              this.prevNumber = this.result;
-              this.currentNumber = "";
-              this.history.push(this.result);
-            } else if (this.result == undefined || this.total == 0) {
-              this.result = Math.sqrt(parseFloat(this.currentNumber))
-              this.movingNumbers();
-              this.squareRootTrue = false;
-              this.currentNumber = "";
-              this.history.push(this.result);
+              this.saveToHistory = this.result + this.target;
             } else {
-              this.result = Math.sqrt(parseFloat(this.total))
+              this.addTrue = true;
+              this.subTrue = false;
+              this.divTrue = false;
+              this.multiTrue = false;
               this.squareRootTrue = false;
-              this.history.push(this.result);
+              this.squaredTrue = false;
+              this.result = this.prevNumber;
+              this.saveToHistory = this.result + this.target;
+            }
+            this.currentNumber = "";
+          },
+          sub: function(e) {
+            this.target = e.target.innerHTML;
+            this.saveToHistory += this.target
+            if (this.addTrue && this.currentNumber == "") {
+              this.subTrue = true;
+              this.addTrue = false;
+              this.result = parseFloat(this.result);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+              this.currentNumber = "";
+            } else {
+              this.isDecimal = false;
+              if (this.currentNumber == "" && this.squaredTrue != true) {
+                this.subTrue = true;
+                this.result = this.prevNumber;
+                this.saveToHistory = this.result + this.target;
+              } else if (this.currentNumber == "" && this.squaredTrue) {
+                this.subTrue = true;
+                this.squaredTrue = false;
+                this.result = Math.pow(parseFloat(this.result), 2);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else if (this.target == "-" && this.currentNumber == "-0") {
+                this.subTrue = true;
+                this.currentNumber = this.target + parseFloat(this.currentNumber);
+                this.saveToHistory = this.result + this.target;
+              } else if (this.subTrue && this.currentNumber !== "") {
+                this.result = this.prevNumber - parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.result = this.result + this.target;
+              } else if (this.addTrue && this.currentNumber !== "") {
+                this.subTrue = true;
+                this.addTrue = false;
+                this.result = this.prevNumber + parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else if (this.divTrue && this.currentNumber !== "") {
+                this.subTrue = true;
+                this.divTrue = false;
+                this.result = this.prevNumber / parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else if (this.multiTrue && this.currentNumber !== "") {
+                this.subTrue = true;
+                this.multiTrue = false;
+                this.result = this.prevNumber * parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              } else if (this.result == this.prevNumber && this.currentNumber != "") {
+                this.subTrue = true;
+                this.addTrue = false;
+                this.divTrue = false;
+                this.multiTrue = false;
+                this.squareRootTrue = false;
+                this.squaredTrue = false;
+                this.result = parseFloat(this.currentNumber);
+                this.movingNumbers();
+                this.saveToHistory = this.result + this.target;
+              }
+              this.currentNumber = "";
             }
           },
-          squared: function() {
-            this.squaredTrue = true;
-            if (this.prevNumber === undefined && this.currentNumber > 0 || this.prevNumber == 0 && this.currentNumber > 0) {
-              this.result = Math.pow(this.currentNumber, 2);
-              this.prevNumber = this.result;
-              this.total = this.result;
+          divide: function(e) {
+            this.divTrue = true;
+            this.isDecimal = false;
+            this.target = e.target.innerHTML;
+            this.saveToHistory += this.target
+            if (this.prevNumber == 0 && this.currentNumber != "" && this.subTrue) {
+              this.subTrue = false;
+              this.prevNumber = "-" + parseFloat(this.currentNumber);
               this.result = this.prevNumber;
               this.currentNumber = "";
-              this.history.push(this.result);
-            } else if (this.result > 0 && this.prevNumber > 0) {
-              this.result = Math.pow(this.result, 2);
               this.movingNumbers();
-              this.history.push(this.result);
+              this.saveToHistory = this.result + this.target;
+            } else if (this.prevNumber == 0 && this.currentNumber != "") {
+              this.prevNumber = parseFloat(this.currentNumber);
+              this.result = this.prevNumber;
+              this.currentNumber = "";
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.subTrue && this.currentNumber !== "") {
+              this.subTrue = false;
+              this.result = this.prevNumber - parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.addTrue && this.currentNumber !== "") {
+              this.addTrue = false;
+              this.result = this.prevNumber + parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.multiTrue && this.currentNumber !== "") {
+              this.multiTrue = false;
+              this.result = this.prevNumber * parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.divTrue && this.currentNumber !== "" && this.currentNumber !== 0) {
+              this.result = this.prevNumber / parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else {
+              this.addTrue = false;
+              this.subTrue = false;
+              this.divTrue = true;
+              this.multiTrue = false;
+              this.squareRootTrue = false;
+              this.squaredTrue = false;
+              this.result = this.prevNumber;
+              this.saveToHistory = this.result + this.target;
+            }
+            this.currentNumber = "";
+          },
+          multiply: function(e) {
+            this.multiTrue = true;
+            this.isDecimal = false;
+            this.target = e.target.innerHTML;
+            this.saveToHistory += this.target;
+            if (this.multiTrue && this.prevNumber === 0 && this.subTrue) {
+              this.prevNumber = -1;
+              this.result = parseFloat(this.prevNumber) * parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.subTrue = false;
+              this.saveToHistory = this.result + this.target;
+            } else if (this.multiTrue && this.prevNumber == 0) {
+              this.prevNumber = 1;
+              this.result = parseFloat(this.prevNumber) * parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.subTrue && this.currentNumber !== "") {
+              this.result = this.prevNumber - this.currentNumber;
+              this.movingNumbers();
+              this.subTrue = false;
+              this.saveToHistory = this.result + this.target;
+            } else if (this.divTrue && this.currentNumber !== "") {
+              this.result = parseFloat(this.prevNumber) / parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.divTrue = false;
+              this.saveToHistory = this.result + this.target;
+            } else if (this.addTrue && this.currentNumber !== "") {
+              this.addTrue = false;
+              this.result = parseFloat(this.prevNumber) + parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else if (this.multiTrue && this.currentNumber !== "") {
+              this.result = parseFloat(this.prevNumber) * parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.result + this.target;
+            } else {
+              this.addTrue = false;
+              this.subTrue = false;
+              this.divTrue = false;
+              this.multiTrue = true;
+              this.squareRootTrue = false;
+              this.squaredTrue = false;
+              this.result = this.prevNumber;
+              this.saveToHistory = this.result + this.target;
+            }
+            this.currentNumber = "";
+          },
+          squareRoot: function(e) {
+            this.target = e.target.innerHTML;
+            this.squareRootTrue = true;
+            this.isDecimal = false;
+            if (this.squareRootTrue && this.currentNumber != "") {
+              this.result = Math.sqrt(this.currentNumber);
+              this.prevNumber = this.total;
+              this.saveToHistory = this.target + this.currentNumber + "=" + this.result;
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+              this.movingNumbers();
+            } else if (this.divTrue || this.multiTrue || this.addTrue || this.subTrue && this.currentNumber == "") {
+              this.result = Math.sqrt(this.currentNumber);
+              this.movingNumbers();
+              this.saveToHistory = this.target + this.currentNumber + "=" + this.result
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+              this.currentNumber = "";
+            } else {
+              this.outputForRoot = this.prevNumber
+              this.result = Math.sqrt(this.result);
+              this.saveToHistory = this.target + this.outputForRoot + "=" + this.result
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+              this.movingNumbers();
+            }
+            this.currentNumber = "";
+          },
+          squared: function(e) {
+            this.target = e.target.innerHTML;
+            this.isDecimal = false;
+            if (this.currentNumber == "" && this.result == 0) {
+              this.result = 0;
+              this.prevNumber = this.total;
+              this.currentNumber = "";
+            } else if (this.result == 0) {
+              this.outputForSquared = this.currentNumber;
+              this.result = Math.pow(parseFloat(this.currentNumber), 2);
+              this.movingNumbers();
+              this.squaredTrue = false;
+              this.currentNumber = "";
+              this.saveToHistory = this.outputForSquared + this.target + "=" + this.result
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+            } else if (this.currentNumber !== "") {
+              this.outputForSquared = this.prevNumber;
+              this.result = Math.pow(parseFloat(this.currentNumber), 2);
+              this.saveToHistory = this.outputForSquared + this.target + "=" + this.result
+              this.movingNumbers();
+              this.currentNumber = "";
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+            } else if (this.divTrue || this.multiTrue || this.addTrue || this.subTrue && this.currentNumber == "") {
+              this.result = Math.pow(parseFloat(this.prevNumber), 2);
+              this.movingNumbers()
+              this.currentNumber = "";
+              this.saveToHistory = this.prevNumber + this.target + "=" + this.result
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+            } else {
+              this.result = Math.pow(parseFloat(this.result), 2);
+              this.saveToHistory = this.prevNumber + this.target + "=" + this.result
+              this.prevNumber = this.total;
+              this.currentNumber = "";
+              this.movingNumbers();
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
             }
           },
           theResult: function() {
-            console.log(this.history.length)
-
             if (this.addTrue) {
-              if (this.squareRootTrue) {
-                this.result = parseFloat(this.total) + parseFloat(this.prevNumber);
-                this.squareRootTrue = false;
-                this.addTrue = false;
-                this.movingNumbers();
-                this.history.push(this.result);
-              } else {
-                this.result = parseFloat(this.total) + parseFloat(this.currentNumber);
-                this.movingNumbers();
-                this.addTrue = false;
-                this.currentNumber = "";
-                this.history.push(this.result);
-              }
-            }
-            if (this.subTrue) {
-              if (this.squareRootTrue) {
-                this.result = parseFloat(this.total) - this.prevNumber;
-                this.squareRootTrue = false;
-                this.subTrue = false;
-                this.movingNumbers();
-                this.history.push(this.result);
-              } else {
-                this.result = this.total - this.currentNumber;
-                this.movingNumbers();
-                this.subTrue = false;
-                this.currentNumber = "";
-                this.history.push(this.result);
-              }
-            }
-            if (this.divTrue) {
-              if (this.squareRootTrue) {
-                this.result = parseFloat(this.total) / this.prevNumber;
-                this.squareRootTrue = false;
-                this.divTrue = false;
-                this.movingNumbers();
-                this.history.push(this.result);
-              } else if (this.currentNumber == 0 || this.currentNumber == "") {
+              this.result = parseFloat(this.result) + parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.addTrue = false;
+              this.currentNumber = "";
+              this.saveToHistory = this.saveToHistory + "=" + this.result;
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+            } else if (this.subTrue) {
+              this.result = this.prevNumber - parseFloat(this.currentNumber);
+              this.movingNumbers();
+              this.subTrue = false;
+              this.history.push(this.result);
+              this.saveToHistory = this.saveToHistory + "=" + this.result;
+              this.currentNumber = "";
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
+            } else if (this.divTrue) {
+              if (this.currentNumber === 0 || this.currentNumber == "") {
                 console.log("can't divide by zero");
               } else {
-                this.result = this.total / this.currentNumber;
+                this.result = this.prevNumber / parseFloat(this.currentNumber);
                 this.movingNumbers();
                 this.divTrue = false;
                 this.currentNumber = "";
-                this.history.push(this.result);
+                this.saveToHistory = this.saveToHistory + "=" + this.result;
+                this.history.push(this.saveToHistory);
+                this.saveToHistory = this.result;
               }
-            }
-            if (this.multiTrue) {
-              if (this.squareRootTrue) {
-                this.result = parseFloat(this.total) * this.prevNumber;
-                this.squareRootTrue = false;
-                this.multiTrue = false;
-                this.movingNumbers();
-                this.history.push(this.result);
-              } else {
-                this.result = this.total * this.currentNumber;
-                this.movingNumbers();
-                this.multiTrue = false;
-                this.currentNumber = "";
-                this.history.push(this.result);
-              }
-            }
-            if (this.squareRootTrue && this.prevNumber > 0) {
-              this.result = Math.sqrt(this.total);
+            } else if (this.multiTrue) {
+              this.result = parseFloat(this.result) * this.currentNumber;
+              this.multiTrue = false;
               this.movingNumbers();
-              this.squareRootTrue = false;
+              this.saveToHistory = this.saveToHistory + "=" + this.result;
               this.currentNumber = "";
-              this.history.push(this.result);
+              this.history.push(this.saveToHistory);
+              this.saveToHistory = this.result;
             }
           },
-
           clear: function() {
+            this.isDecimal = false;
             this.prevNumber = 0;
             this.total = 0;
-            this.currentNumber = "";
-            this.result = "";
+            this.currentNumber = 0;
+            this.result = 0;
             this.addTrue = false;
             this.subTrue = false;
             this.divTrue = false;
             this.multiTrue = false;
-            this.squareRootTrue = false;
-            this.squaredTrue = false;
+            this.saveToHistory = "";
+            this.startingZero = false;
           },
           addNr: function(e) {
+            this.target = e.target.innerHTML
+            this.saveToHistory += this.target
             if (e.target.innerHTML == ".") {
-              this.currentNumber = this.currentNumber + "" + e.target.innerHTML;
-            } else {
-              if (this.currentNumber == undefined) {
-                this.currentNumber = parseFloat(e.target.innerHTML);
+              this.startingZero = true;
+              this.isDecimal = true;
+              this.currentNumber = this.currentNumber + this.target;
+            } else if (this.currentNumber == 0 && this.prevNumber == 0 && this.result == 0) {
+              this.currentNumber == ""
+              if (this.startingZero) {
+                this.currentNumber = this.currentNumber + this.target
               } else {
-                this.currentNumber = this.currentNumber + "" + parseFloat(e.target.innerHTML);
+                this.currentNumber = parseFloat(this.target);
               }
+            } else if (this.currentNumber == -0) {
+              if (this.startingZero) {
+                this.currentNumber = this.currentNumber + this.target
+              } else {
+                this.currentNumber = parseFloat(this.target);
+              }
+            } else {
+              this.currentNumber = this.currentNumber + "" + parseFloat(this.target);
             }
           }
         }
@@ -327,11 +411,12 @@
       background-color: black;
       border: 2px solid white;
       height: 50px;
-      width: 355px;
+      max-width: 355px;
       margin: 5px;
       font-size: 36px;
       text-align: right;
       padding-right: 10px;
+      overflow: hidden;
     }
 
     p {
@@ -342,11 +427,14 @@
       color: ghostwhite;
       background-color: black;
       padding: 20px;
-      /* margin: 2px; */
       font-weight: 700;
       font-size: 20px;
-      width: 80px
+      width: 80px;
+      height: 70px;
+      cursor: pointer;
     }
+
+
 
     button:nth-last-child(n) {
       padding: 20px;
@@ -358,6 +446,15 @@
 
     button.result {
       width: 180px;
+
+    }
+
+    #disabledBtn {
+      opacity: 0;
+    }
+
+    button:hover {
+      background-color: crimson;
     }
 
     #inputField {
@@ -389,8 +486,11 @@
       font-size: 20px;
       list-style-type: none;
       padding-left: 2px;
-      /* padding: 3px; */
       margin-top: -10px;
+    }
+
+    li {
+      width: 100px;
     }
   </style>
 </head>
@@ -399,11 +499,13 @@
 
   <div id="root">
     <div id="calc">
-      <p id="results">{{result}}</p>
-      <input id="inputField" v-model.number="currentNumber"></input>
+      <p id="results">{{saveToHistory}}</p>
+      <input id="inputField" v-model.number="currentNumber" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></input>
       <br>
       <button v-on:click="clear">C</button>
-      <button v-on:click="squareRoot" v-if="disableSqrt">√</button>
+      <button v-on:click="squareRoot" v-if="this.result > 0">√</button>
+      <button v-on:click="squareRoot" v-else-if="this.currentNumber > 0">√</button>
+      <button id="disabledBtn" v-else v-bind:disabled="notShowing">X</button>
       <button v-on:click="squared">x²</button>
       <button v-on:click="divide">/</button>
       <br>
@@ -422,17 +524,11 @@
       <button v-on:click="addNr">3</button>
       <button v-on:click="addition">+</button>
       <br>
-      <button v-on:click="addNr">.</button>
+      <button v-bind:disabled="isDecimal" v-on:click="addNr">.</button>
       <button v-on:click="addNr">0</button>
       <button class="result" v-on:click="theResult">=</button>
 
       <div id="output">
-        <!-- <p>Current number: {{currentNumber}}</p>
-        <p>Previous number: {{prevNumber}}</p>
-        <p>Current total: {{total}}</p>
-        <p>Result: {{result}}</p>
- -->
-
         <h1>History:</h1>
         <ul>
           <li class="calcHistory" v-for="item in history">
