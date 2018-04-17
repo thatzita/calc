@@ -94,7 +94,7 @@
           },
           sub: function(e) {
             this.target = e.target.innerHTML;
-            this.saveToHistory += this.target
+            // this.saveToHistory += this.target
             if (this.addTrue && this.currentNumber == "") {
               this.subTrue = true;
               this.addTrue = false;
@@ -121,7 +121,7 @@
               } else if (this.subTrue && this.currentNumber !== "") {
                 this.result = this.prevNumber - parseFloat(this.currentNumber);
                 this.movingNumbers();
-                this.result = this.result + this.target;
+                this.saveToHistory = this.result + this.target;
               } else if (this.addTrue && this.currentNumber !== "") {
                 this.subTrue = true;
                 this.addTrue = false;
@@ -489,7 +489,7 @@
     }
 
     li {
-      width: 100px;
+      /* width: 100px; */
     }
   </style>
 </head>
